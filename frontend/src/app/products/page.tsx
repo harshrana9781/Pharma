@@ -1,31 +1,30 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import ProductTable from '@/components/ProductTable';
 
-export const metadata = {
-  title: 'Products | PharmaPlus',
-};
+export default function ProductsPage() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-async function getProducts() {
-  try {
-    let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-    if (apiUrl.startsWith('/') && typeof window === 'undefined') {
-      const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-      apiUrl = `${host}${apiUrl}`;
-    }
-    const res = await fetch(`${apiUrl}/api/products`, { cache: 'no-store' })
-      .catch(() => null);
-      
-    if (res && res.ok) {
-      return await res.json();
-    }
-  } catch (error) {
-    console.error("Failed to fetch products", error);
-  }
-  
-  return [];
-}
-
-export default async function ProductsPage() {
-  const products = await getProducts();
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+        const res = await fetch(`${apiUrl}/api/products`);
+        if (res.ok) {
+          const data = await res.json();
+          setProducts(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
@@ -34,7 +33,13 @@ export default async function ProductsPage() {
         <p className="text-lg text-slate-500">Discover top-quality medicines and wellness essentials with fully transparent manufacturing details.</p>
       </div>
 
-      <ProductTable products={products} />
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      ) : (
+        <ProductTable products={products} />
+      )}
     </div>
   );
 }
