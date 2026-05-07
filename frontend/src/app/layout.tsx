@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Chatbot from '@/components/Chatbot';
+import { CartProvider } from '@/context/CartContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,12 +21,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased`} suppressHydrationWarning>
-        <Navbar />
-        <main className="min-h-screen pt-16">
-          {children}
-        </main>
-        <Toaster position="bottom-right" />
-        <Chatbot />
+        <CartProvider>
+          <Navbar />
+          <main className="min-h-screen pt-16">
+            {children}
+          </main>
+          <Toaster position="bottom-right" />
+          <Chatbot />
+        </CartProvider>
       </body>
     </html>
   );

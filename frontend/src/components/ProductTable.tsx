@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
 interface Product {
   id: string;
@@ -14,6 +15,7 @@ interface Product {
 
 export default function ProductTable({ products }: { products: Product[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   const toggleRow = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -71,7 +73,13 @@ export default function ProductTable({ products }: { products: Product[] }) {
                             <span className="text-slate-500 font-medium">Expiry Date:</span>
                             <span className="font-semibold text-red-600">{formatDate(product.expDate)}</span>
                           </div>
-                          <button className="mt-2 w-full bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors shadow-md">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCart(product);
+                            }}
+                            className="mt-2 w-full bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors shadow-md"
+                          >
                             Add to Cart
                           </button>
                         </div>

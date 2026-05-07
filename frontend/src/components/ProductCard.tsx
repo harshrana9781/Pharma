@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 interface Product {
   id: string;
@@ -10,6 +11,7 @@ interface Product {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart();
   return (
     <div className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
       <div className="relative h-48 w-full bg-slate-50 overflow-hidden">
@@ -31,7 +33,13 @@ export default function ProductCard({ product }: { product: Product }) {
         <p className="text-slate-500 text-sm mb-4 line-clamp-2 flex-grow">{product.description}</p>
         <div className="flex items-center justify-between mt-auto">
           <span className="text-2xl font-extrabold text-blue-600">₹{product.price.toFixed(2)}</span>
-          <button className="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-600 transition-colors shadow-md">
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              addToCart(product);
+            }}
+            className="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-600 transition-colors shadow-md"
+          >
             Add to Cart
           </button>
         </div>

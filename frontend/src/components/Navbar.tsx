@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { ShoppingCart, User, Menu, LogOut, ShieldCheck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<{name: string, role: string} | null>(null);
+  const { cartCount } = useCart();
 
   useEffect(() => {
     // Read from localStorage only after component mounts (client-side)
@@ -49,7 +51,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-6">
             <Link href="/cart" className="relative text-slate-600 hover:text-blue-600 transition group">
               <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="absolute -top-2 -right-2 bg-teal-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">0</span>
+              <span className="absolute -top-2 -right-2 bg-teal-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{cartCount}</span>
             </Link>
             
             {user ? (
@@ -93,7 +95,7 @@ export default function Navbar() {
           <div className="flex flex-col space-y-4">
             <Link href="/products" className="text-slate-600 font-medium px-4 py-2 hover:bg-slate-50 rounded-lg">Products</Link>
             <Link href="/cart" className="text-slate-600 font-medium px-4 py-2 hover:bg-slate-50 rounded-lg flex items-center justify-between">
-              Cart <span className="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+              Cart <span className="bg-teal-500 text-white text-xs font-bold px-2 py-1 rounded-full">{cartCount}</span>
             </Link>
             
             <div className="h-px bg-slate-100 my-2"></div>
