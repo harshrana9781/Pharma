@@ -20,8 +20,9 @@ export default function AdminDashboard() {
 
     const fetchData = async () => {
       try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
         // Fetch users
-        const usersRes = await fetch('http://localhost:5000/api/users', {
+        const usersRes = await fetch(`${apiUrl}/api/users`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -35,7 +36,7 @@ export default function AdminDashboard() {
         setUsers(usersData);
 
         // Fetch products
-        const productsRes = await fetch('http://localhost:5000/api/products');
+        const productsRes = await fetch(`${apiUrl}/api/products`);
         const productsData = await productsRes.json();
         setProducts(productsData);
 

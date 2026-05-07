@@ -48,7 +48,8 @@ export default function Chatbot() {
         .filter((m, i) => !(i === 0 && m.role === "model"))
         .map((m) => ({ role: m.role, content: m.content }));
 
-      const response = await axios.post("http://localhost:5000/api/chat", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await axios.post(`${apiUrl}/api/chat`, {
         message: userMessage,
         history: historyToSend,
       });

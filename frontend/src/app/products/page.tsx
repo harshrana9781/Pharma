@@ -6,7 +6,12 @@ export const metadata = {
 
 async function getProducts() {
   try {
-    const res = await fetch('http://localhost:5000/api/products', { cache: 'no-store' })
+    let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    if (apiUrl.startsWith('/') && typeof window === 'undefined') {
+      const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+      apiUrl = `${host}${apiUrl}`;
+    }
+    const res = await fetch(`${apiUrl}/api/products`, { cache: 'no-store' })
       .catch(() => null);
       
     if (res && res.ok) {
