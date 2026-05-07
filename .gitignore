@@ -1,7 +1,37 @@
+# General
+node_modules/
+.DS_Store
+*.pem
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
 # Environment variables
 .env
 .env.*
 !.env.example
 
-# Node modules
-node_modules/
+# Next.js / Frontend
+.next/
+out/
+build/
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+coverage/
+
+# Yarn
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Backend / Prisma
+generated/prisma/
+dist/
