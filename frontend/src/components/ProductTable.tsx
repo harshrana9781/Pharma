@@ -59,34 +59,87 @@ export default function ProductTable({ products }: { products: Product[] }) {
                 {expandedId === product.id && (
                   <tr className="bg-slate-50/50 border-t-0 shadow-inner">
                     <td colSpan={4} className="p-6 px-10">
-                      <div className="flex flex-col md:flex-row gap-8 items-start justify-between">
-                        <div className="flex-1">
+                      <div className="flex flex-col xl:flex-row gap-8 items-start justify-between">
+                        <div className="flex-1 max-w-xl">
                           <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Details</h4>
-                          <p className="text-slate-700">{product.description}</p>
+                          <p className="text-slate-700 mb-6">{product.description}</p>
+                          
+                          <div className="flex gap-6 mb-6">
+                            <div className="bg-white p-3 rounded-lg border border-slate-100 flex-1">
+                              <span className="text-xs text-slate-500 block mb-1">Mfg. Date</span>
+                              <span className="font-semibold text-slate-800 text-sm">{formatDate(product.mfgDate)}</span>
+                            </div>
+                            <div className="bg-white p-3 rounded-lg border border-slate-100 flex-1">
+                              <span className="text-xs text-slate-500 block mb-1">Expiry Date</span>
+                              <span className="font-semibold text-red-600 text-sm">{formatDate(product.expDate)}</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-3 min-w-[250px] bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-500 font-medium">Mfg. Date:</span>
-                            <span className="font-semibold text-slate-800">{formatDate(product.mfgDate)}</span>
+
+                        <div className="flex-1 w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                          <div className="bg-slate-100 p-3 px-5 border-b border-slate-200">
+                            <h4 className="font-bold text-slate-800 text-sm">Compare Prices & Buy</h4>
                           </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-500 font-medium">Expiry Date:</span>
-                            <span className="font-semibold text-red-600">{formatDate(product.expDate)}</span>
-                          </div>
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              addToCart(product);
-                            }}
-                            className="mt-2 w-full bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors shadow-md"
-                          >
-                            Add to Cart
-                          </button>
+                          
+                          {/* Dynamically generated pharmacy list based on product ID hash */}
+                          <ul className="divide-y divide-slate-100">
+                            {[
+                              { 
+                                name: 'PharmaPlus', 
+                                price: product.price, 
+                                delivery: 'Free',
+                                time: '1-2 Days'
+                              },
+                              { 
+                                name: 'Apollo Pharmacy', 
+                                price: product.price * (1 + ((product.id.charCodeAt(0) % 15) / 100)), 
+                                delivery: '₹40',
+                                time: 'Today'
+                              },
+                              { 
+                                name: 'Netmeds', 
+                                price: product.price * (1 - ((product.id.charCodeAt(product.id.length-1) % 10) / 100)), 
+                                delivery: '₹25',
+                                time: '2-3 Days'
+                              },
+                              { 
+                                name: '1mg', 
+                                price: product.price * (1 + ((product.id.charCodeAt(product.id.length/2) % 8) / 100)), 
+                                delivery: '₹30',
+                                time: '2 Days'
+                              }
+                            ].sort((a, b) => a.price - b.price).map((pharmacy, idx) => (
+                              <li key={idx} className="p-4 px-5 flex flex-wrap gap-4 items-center justify-between hover:bg-slate-50 transition">
+                                <div>
+                                  <div className="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                    {pharmacy.name}
+                                    {idx === 0 && <span className="bg-emerald-100 text-emerald-700 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">Best Price</span>}
+                                  </div>
+                                  <div className="text-xs text-slate-500 mt-1">
+                                    Delivery: {pharmacy.time} ({pharmacy.delivery})
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <span className="font-extrabold text-blue-600">₹{pharmacy.price.toFixed(2)}</span>
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      addToCart(product, 1, pharmacy.name, pharmacy.price);
+                                    }}
+                                    className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors shadow-sm"
+                                  >
+                                    Add
+                                  </button>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       </div>
                     </td>
                   </tr>
                 )}
+
               </React.Fragment>
             ))}
           </tbody>

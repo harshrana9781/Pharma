@@ -8,7 +8,10 @@ import toast from 'react-hot-toast';
 export default function CartPage() {
   const { cart, removeFromCart, clearCart } = useCart();
 
-  const totalBill = cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+  const totalBill = cart.reduce((total, item) => {
+    const price = item.actualPrice !== undefined ? item.actualPrice : item.product.price;
+    return total + (price * item.quantity);
+  }, 0);
 
   const handleCheckout = () => {
     if (cart.length === 0) {
@@ -70,19 +73,22 @@ export default function CartPage() {
                 
                 <div className="flex-1 text-center sm:text-left">
                   <h4 className="text-lg font-bold text-slate-800 mb-1">{item.product.name}</h4>
-                  <p className="text-slate-500 text-sm mb-3 line-clamp-2">{item.product.description}</p>
+                  <p className="text-slate-500 text-sm mb-1 line-clamp-2">{item.product.description}</p>
+                  <p className="text-emerald-600 text-xs font-semibold mb-3 bg-emerald-50 inline-block px-2 py-0.5 rounded-md border border-emerald-100">
+                    Sold by: {item.pharmacyName || 'PharmaPlus'}
+                  </p>
                   <div className="flex items-center justify-center sm:justify-start gap-3">
                     <span className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded-md">
                       Qty: {item.quantity}
                     </span>
                     <span className="text-slate-400 text-sm">×</span>
-                    <span className="font-semibold text-slate-700">₹{item.product.price.toFixed(2)}</span>
+                    <span className="font-semibold text-slate-700">₹{(item.actualPrice !== undefined ? item.actualPrice : item.product.price).toFixed(2)}</span>
                   </div>
                 </div>
                 
                 <div className="flex flex-col items-center sm:items-end justify-between h-full min-w-[100px]">
                   <span className="text-xl font-extrabold text-blue-600 mb-4 sm:mb-0">
-                    ₹{(item.product.price * item.quantity).toFixed(2)}
+                    ₹{((item.actualPrice !== undefined ? item.actualPrice : item.product.price) * item.quantity).toFixed(2)}
                   </span>
                   <button 
                     onClick={() => removeFromCart(item.product.id)}

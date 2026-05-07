@@ -17,11 +17,13 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+  pharmacyName?: string;
+  actualPrice?: number;
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
+  addToCart: (product: Product, quantity?: number, pharmacyName?: string, actualPrice?: number) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
   cartCount: number;
@@ -49,7 +51,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product: Product, quantity: number = 1) => {
+  const addToCart = (product: Product, quantity: number = 1, pharmacyName: string = 'PharmaPlus', actualPrice: number = product.price) => {
     // Check if user is logged in
     const token = localStorage.getItem('token');
     if (!token) {
@@ -58,17 +60,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.product.id === product.id);
+      // Find item with same product ID AND same pharmacy
+      const existingItem = prevCart.find((item) => item.product.id === product.id && item.pharmacyName === pharmacyName);
       if (existingItem) {
-        toast.success(`Added another ${product.name} to cart`);
+        toast.success(`Added another ${product.name} from ${pharmacyName} to cart`);
         return prevCart.map((item) =>
-          item.product.id === product.id
+          (item.product.id === product.id && item.pharmacyName === pharmacyName)
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      toast.success(`${product.name} added to cart`);
-      return [...prevCart, { product, quantity }];
+      toast.success(`${product.name} from ${pharmacyName} added to cart`);
+      return [...prevCart, { product, quantity, pharmacyName, actualPrice }];
     });
   };
 
