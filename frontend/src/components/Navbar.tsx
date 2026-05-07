@@ -9,7 +9,7 @@ import { useCart } from '@/context/CartContext';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<{name: string, role: string} | null>(null);
-  const { cartCount } = useCart();
+  const { cartCount, clearCart } = useCart();
 
   useEffect(() => {
     // Read from localStorage only after component mounts (client-side)
@@ -26,6 +26,8 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('cart');
+    clearCart();
     setUser(null);
     window.location.href = '/login';
   };
